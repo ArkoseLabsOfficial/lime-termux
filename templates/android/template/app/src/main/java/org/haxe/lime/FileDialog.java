@@ -334,7 +334,14 @@ public class FileDialog extends Extension
 						}
 						break;
 					case DOCUMENT_TREE_REQUEST_CODE:
-						//Log.d(LOG_TAG, "Got directory tree uri:" + uri.toString());
+						try
+						{
+							path = uri.toString();
+						}
+						catch (IOException e)
+						{
+							Log.d(LOG_TAG, "Got directory tree uri:" + uri.toString());
+						}
 						break;
 					default:
 						break;
