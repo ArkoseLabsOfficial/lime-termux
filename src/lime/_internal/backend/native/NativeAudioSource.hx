@@ -666,7 +666,7 @@ class NativeAudioSource
 
 		#if target.threaded
 		if (streamSources.length != 0)
-			backend.codename.ThreadUtil.execAsync(streamBuffersUpdate);
+			lime.utils.ThreadUtil.execAsync(streamBuffersUpdate);
 		#else
 		if (streamSources.length == 0)
 		{

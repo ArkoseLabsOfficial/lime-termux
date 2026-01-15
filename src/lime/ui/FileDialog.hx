@@ -510,8 +510,7 @@ class FileDialog #if android implements JNISafety #end
 							trace('Failed to dispatch onSave: $e');
 					}
 				case DOCUMENT_TREE_REQUEST_CODE:
-					trace("Directory select doesn't work perfectly yet.");
-					onCancel.dispatch();
+					//trace("Directory select doesn't work perfectly yet.");
 					try
 					{
 						onSelect.dispatch(path); //get path instead of uri

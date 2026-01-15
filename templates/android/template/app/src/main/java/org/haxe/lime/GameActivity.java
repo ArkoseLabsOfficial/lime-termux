@@ -436,6 +436,7 @@ public class GameActivity extends SDLActivity {
 
 		orientationListener.enable();
 
+		::if (!DISABLE_AUDIO_FOCUS)::
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
 			audioManager.requestAudioFocus(audioFocusRequest);
@@ -449,6 +450,7 @@ public class GameActivity extends SDLActivity {
 			);
 
 		}
+		::end::
 
 		for (Extension extension : extensions) {
 
@@ -502,6 +504,7 @@ public class GameActivity extends SDLActivity {
 
 		super.onStop ();
 
+		::if (!DISABLE_AUDIO_FOCUS)::
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
 			audioManager.abandonAudioFocusRequest(audioFocusRequest);
@@ -511,6 +514,7 @@ public class GameActivity extends SDLActivity {
 			audioManager.abandonAudioFocus(afChangeListener);
 
 		}
+		::end::
 
 		for (Extension extension : extensions) {
 

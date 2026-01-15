@@ -225,13 +225,13 @@ public class FileDialog extends Extension
 		{
 			onFileSave = new FileSaveCallback()
 			{
-        		@Override
-        		public void execute(Uri uri)
+				@Override
+				public void execute(Uri uri)
 				{
 					//Log.d(LOG_TAG, "Saving File to " + uri.toString());
 					writeBytesToFile(uri, data);
-        	    }
-        	};
+				}
+			};
 		}
 		else
 		{
@@ -248,9 +248,9 @@ public class FileDialog extends Extension
 	}
 
 	public void openDocumentTree(String defaultPath)
-    {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
+	{
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		intent.addCategory(Intent.CATEGORY_DEFAULT);
 	
 		if (defaultPath != null)
 		{
@@ -270,8 +270,8 @@ public class FileDialog extends Extension
 
 		//Log.d(LOG_TAG, "launching directory picker (ACTION_OPEN_DOCUMENT_TREE) intent!");
 		awaitingResults = true;
-        mainActivity.startActivityForResult(intent, DOCUMENT_TREE_REQUEST_CODE);
-    }
+		mainActivity.startActivityForResult(intent, DOCUMENT_TREE_REQUEST_CODE);
+	}
 
 	public static void getPersistableURIAccess(String uriStr)
 	{
@@ -308,12 +308,12 @@ public class FileDialog extends Extension
 						{
 							if (data.getClipData() != null)
 							{
-                				ClipData clipData = data.getClipData();
+								ClipData clipData = data.getClipData();
 								List<String> pathsList = new ArrayList<>();
-                				for (int i = 0; i < clipData.getItemCount(); i++) {
-                    				Uri fileUri = clipData.getItemAt(i).getUri();
+								for (int i = 0; i < clipData.getItemCount(); i++) {
+									Uri fileUri = clipData.getItemAt(i).getUri();
 									pathsList.add(copyURIToCache(fileUri));
-	                			}
+								}
 								path = String.join(",", pathsList);
 							}
 							else if (data.getData() != null)
@@ -336,11 +336,11 @@ public class FileDialog extends Extension
 					case DOCUMENT_TREE_REQUEST_CODE:
 						try
 						{
-							path = uri.toString();
+							path = uri;
 						}
-						catch (IOException e)
+						finally
 						{
-							Log.d(LOG_TAG, "Got directory tree uri:" + uri.toString());
+							Log.e(LOG_TAG, "Got directory tree uri:" + uri);
 						}
 						break;
 					default:
@@ -361,12 +361,12 @@ public class FileDialog extends Extension
 		else
 			args[2] = data.getData().toString();
 		if (path != null) {
-        	args[3] = path;
-    	} else if (data != null && data.getData() != null) {
-        	args[3] = data.getData().getPath();
-    	} else {
-      	  args[3] = null;
-    	}
+			args[3] = getOriginalPath(path);
+		} else if (data != null && data.getData() != null) {
+			args[3] = getOriginalPath(data.getData().getPath());
+		} else {
+	  	  args[3] = null;
+		}
 		//Log.d(LOG_TAG, "Dispatching activity results: " + uri);
 		haxeObject.call("onJNIActivityResult", args); 
 
@@ -386,60 +386,60 @@ public class FileDialog extends Extension
 	private static byte[] getFileBytes(Uri fileUri) throws IOException
 	{
 		ContentResolver contentResolver = mainContext.getContentResolver();
-    	ParcelFileDescriptor parcelFileDescriptor = null;
-    	FileInputStream fileInputStream = null;
+		ParcelFileDescriptor parcelFileDescriptor = null;
+		FileInputStream fileInputStream = null;
 
-    	try 
+		try 
 		{
-    	    parcelFileDescriptor = contentResolver.openFileDescriptor(fileUri, "r");
-    	    fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+			parcelFileDescriptor = contentResolver.openFileDescriptor(fileUri, "r");
+			fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
 
-    	    byte[] fileBytes = new byte[(int) parcelFileDescriptor.getStatSize()];
-    	    fileInputStream.read(fileBytes);
+			byte[] fileBytes = new byte[(int) parcelFileDescriptor.getStatSize()];
+			fileInputStream.read(fileBytes);
 
-    	    return fileBytes;
+			return fileBytes;
 
-    	}
+		}
 		catch (IOException e)
 		{
 			Log.e(LOG_TAG, "Failed to get file bytes\n" + e.getMessage());
 		}
 		finally
 		{
-    	    // Close resources
-    	    if (fileInputStream != null)
+			// Close resources
+			if (fileInputStream != null)
 			{
-    	        fileInputStream.close();
-    	    }
+				fileInputStream.close();
+			}
 
-    	    if (parcelFileDescriptor != null)
+			if (parcelFileDescriptor != null)
 			{
-    	        parcelFileDescriptor.close();
-    	    }
-    	}
+				parcelFileDescriptor.close();
+			}
+		}
 
 		return new byte[0];
 	}
 
 	private static void writeBytesToFile(Uri uri, byte[] data)
 	{
-    	try
+		try
 		{
-        	// Open an OutputStream to the URI to write data to the file
-        	OutputStream outputStream = mainContext.getContentResolver().openOutputStream(uri);
+			// Open an OutputStream to the URI to write data to the file
+			OutputStream outputStream = mainContext.getContentResolver().openOutputStream(uri);
 
-	        if (outputStream != null)
+			if (outputStream != null)
 			{
-        	    // Write the byte array to the file
-            	outputStream.write(data);
+				// Write the byte array to the file
+				outputStream.write(data);
 				outputStream.close();  // Don't forget to close the stream
-        	    Log.d(LOG_TAG, "File saved successfully.");
-       		}
-    	}
+				Log.d(LOG_TAG, "File saved successfully.");
+	   		}
+		}
 		catch (IOException e)
 		{
-        	Log.e(LOG_TAG, "Failed to save file: " + e.getMessage());
-    	}
+			Log.e(LOG_TAG, "Failed to save file: " + e.getMessage());
+		}
 	}
 
 	public static String copyURIToCache(Uri uri) throws IOException
@@ -448,7 +448,7 @@ public class FileDialog extends Extension
 			String fileName = new File(uri.getPath()).getName();
 			if (fileName.contains(":"))
 				fileName = fileName.split(":")[1];
-        	File output = new File(mainContext.getCacheDir(), fileName);
+			File output = new File(mainContext.getCacheDir(), fileName);
 			Log.d(LOG_TAG, "Copying URI from '" + uri + "' to cache dir: " + output.getAbsolutePath());
 
 			if (output.exists())
@@ -457,42 +457,42 @@ public class FileDialog extends Extension
 				Log.d(LOG_TAG, "deleting existing copy of: " + output.getAbsolutePath());
 			}
 
-    		ParcelFileDescriptor parcelFileDescriptor = null;
+			ParcelFileDescriptor parcelFileDescriptor = null;
 			FileInputStream fileInputStream = null;
 			OutputStream out = null;
 
-        	try {
-	    	    parcelFileDescriptor = mainContext.getContentResolver().openFileDescriptor(uri, "r");
+			try {
+				parcelFileDescriptor = mainContext.getContentResolver().openFileDescriptor(uri, "r");
 				fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
 
 				byte[] fileBytes = new byte[(int) parcelFileDescriptor.getStatSize()];
-	    	    fileInputStream.read(fileBytes);
+				fileInputStream.read(fileBytes);
 				
 				out = new FileOutputStream(output);
 				out.write(fileBytes);
-        	}
-        	catch (IOException e) {
-            	Log.e(LOG_TAG, e.getMessage());
-        	}
+			}
+			catch (IOException e) {
+				Log.e(LOG_TAG, e.getMessage());
+			}
 			finally
 			{
-	    	    if (fileInputStream != null)
+				if (fileInputStream != null)
 				{
-    		        fileInputStream.close();
-    	    	}
+					fileInputStream.close();
+				}
 
-    	    	if (parcelFileDescriptor != null)
+				if (parcelFileDescriptor != null)
 				{
-    	        	parcelFileDescriptor.close();
-    	    	}
+					parcelFileDescriptor.close();
+				}
 
 				if (out != null)
 				{
 					out.close();
 				}
-    		}
+			}
 
-    		return output.getAbsolutePath();
+			return output.getAbsolutePath();
 		}
 
 		return null;
@@ -505,10 +505,41 @@ public class FileDialog extends Extension
 		String mime = mimeType.getMimeTypeFromExtension(extension);
 		return mime != null ? mime : "*/*";
 	}
+
+	/**
+	 * Attempts to convert various Android SAF/document provider paths
+	 * to a more familiar, filesystem-like path (best effort conversion).
+	 * 
+	 * Handles common patterns:
+	 * - /tree/primary: → /storage/emulated/0/
+	 * - /document/raw: → remove prefix
+	 * - /document/primary: → /storage/emulated/0/
+	 * - /document// → /
+	 * - /document/ → /storage/
+	 * - First ":" → "/"
+	 * 
+	 * @param path Raw path
+	 * @return Best-effort converted path
+	 */
+	public static String getOriginalPath(String path) {
+		if (path == null || path.isEmpty()) return path;
+
+		path = path.replaceFirst("/tree/primary:", "/storage/emulated/0/")
+					.replaceFirst("/document/primary:", "/storage/emulated/0/")
+					.replaceFirst("/document/raw:", "")
+					.replaceFirst("/document/msf:", "/storage/emulated/0/Download/");
+
+		path = path.replaceFirst("/tree/", "/storage/")
+					.replaceFirst("/document/", "/storage/");
+
+		path = path.replaceFirst(":", "/");
+
+		return path.replace("//", "/");
+	}
 }
 
 @FunctionalInterface
 interface FileSaveCallback
 {
-    void execute(Uri uri);
+	void execute(Uri uri);
 }

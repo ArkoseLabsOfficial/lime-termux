@@ -579,6 +579,8 @@ class AndroidPlatform extends PlatformTarget
 		context.ANDROID_ACCEPT_FILE_INTENT = project.config.getArrayString("android.accept-file-intent", []);
 
 		context.SHARE_FILES = project.haxedefs.exists("SHARE_MOBILE_FILES");
+		context.DISABLE_AUDIO_FOCUS = project.haxedefs.exists("DISABLE_AUDIO_FOCUS");
+
 
 		var limeTemplatesPath:String = Path.combine(Haxelib.getPath(new Haxelib("lime")), "templates/bin/aapt2/" + Std.string(System.hostPlatform).toLowerCase());
 		var slashAAPTTwo:String = '/aapt2';
