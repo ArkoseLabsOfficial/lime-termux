@@ -1,9 +1,9 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE.md)
 
-Homura's Lime Fork
+ArkoseLab's Lime Fork
 ====
 
-This Lime fork was previously used for the Android and iOS ports I provided. Although it is no longer used for those ports, it is still maintained and continues to exist for the Shadow Engine.
+This Lime fork is using for the Android and iOS ports I provided. Although Homura's Fork is no longer support for those ports, this fork is reviving the support for those ports
 
 
 License
@@ -17,7 +17,7 @@ Installation
 
 1. Clone the Lime repository:
 
-        haxelib git lime https://github.com/FNF-SE/lime
+        https://github.com/ArkoseLabsOfficial/lime-termux
 
 2. Install required dependencies:
 
